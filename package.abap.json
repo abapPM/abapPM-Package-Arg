@@ -1,21 +1,22 @@
 {
-  "name": "{{module}}",
+  "name": "@apm/package-arg",
   "version": "1.0.0",
-  "description": "{{package}}",
+  "description": "Package Arg (=WIP=)",
   "type": "module",
   "keywords": [
     "abap",
     "apm",
-    "module"
+    "package",
+    "arg"
   ],
   "homepage": "https://abappm.com",
   "bugs": {
-    "url": "https://github.com/abapPM/{{repo}}"
+    "url": "https://github.com/abapPM/ABAP-Package-Arg/issues"
   },
   "license": "MIT",
   "author": {
     "name": "Marc Bernard",
-    "url": "https://abappm.com"
+    "url": "https://github.com/mbtools"
   },
   "maintainers": [
     {
@@ -24,11 +25,12 @@
     }
   ],
   "repository": {
-    "url": "https://github.com/abapPM/{{repo}}"
+    "type": "https",
+    "url": "https://github.com/abapPM/ABAP-Package-Arg"
   },
   "funding": {
     "type": "github",
-    "url": "https://github.com/sponsors/abapPM"
+    "url": "https://github.com/sponsors/abappm"
   },
   "dependencies": {
     "error": "^1.0.0"
