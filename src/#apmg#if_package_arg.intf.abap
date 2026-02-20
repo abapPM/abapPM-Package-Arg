@@ -21,6 +21,10 @@ INTERFACE /apmg/if_package_arg PUBLIC.
       scope        TYPE string,
       escaped_name TYPE string,
       raw          TYPE string,
+      raw_spec     TYPE string,
+      save_spec    TYPE string,
+      fetch_spec   TYPE string,
+      purl         TYPE string,
     END OF ty_result.
 
 ENDINTERFACE.
