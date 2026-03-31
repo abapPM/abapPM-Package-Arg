@@ -6,8 +6,8 @@
   "keywords": [
     "abap",
     "apm",
-    "package",
-    "arg"
+    "arg",
+    "package"
   ],
   "homepage": "https://abappm.com",
   "bugs": {
