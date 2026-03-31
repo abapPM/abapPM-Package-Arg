@@ -56,8 +56,8 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
   METHOD constructor.
 
     DATA arg_string TYPE string.
-    DATA lv_name TYPE string.
-    DATA lv_spec TYPE string.
+    DATA name TYPE string.
+    DATA spec TYPE string.
     DATA name_ends_at TYPE i VALUE -1.
 
     arg_string = arg.
@@ -76,17 +76,17 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
     ENDIF.
 
     IF name_ends_at > 0.
-      lv_name = substring( val = arg_string len = name_ends_at ).
-      lv_spec = substring( val = arg_string off = name_ends_at + 1 ).
-      IF lv_spec IS INITIAL.
-        lv_spec = '*'.
+      name = substring( val = arg_string len = name_ends_at ).
+      spec = substring( val = arg_string off = name_ends_at + 1 ).
+      IF spec IS INITIAL.
+        spec = '*'.
       ENDIF.
     ELSE.
-      lv_name = arg_string.
-      lv_spec = '*'.
+      name = arg_string.
+      spec = '*'.
     ENDIF.
 
-    npa = resolve( name = lv_name spec = lv_spec ).
+    npa = resolve( name = name spec = spec ).
     npa-raw = arg_string.
 
   ENDMETHOD.
@@ -101,20 +101,20 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
 
   METHOD resolve.
 
-    DATA lv_spec TYPE string.
+    DATA spec_local TYPE string.
 
-    lv_spec = spec.
-    IF lv_spec IS INITIAL.
-      lv_spec = '*'.
+    spec_local = spec.
+    IF spec_local IS INITIAL.
+      spec_local = '*'.
     ENDIF.
 
     IF name IS NOT INITIAL.
-      result-raw = |{ name }@{ lv_spec }|.
+      result-raw = |{ name }@{ spec_local }|.
     ELSE.
-      result-raw = lv_spec.
+      result-raw = spec_local.
     ENDIF.
 
-    result-raw_spec = lv_spec.
+    result-raw_spec = spec.
 
     IF name IS NOT INITIAL.
       result-name = name.
@@ -130,16 +130,16 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
 
     result-registry = abap_true.
     result-save_spec = ``.
-    DATA(spec_trimmed) = condense( lv_spec ).
+    DATA(spec_trimmed) = condense( spec_local ).
     result-fetch_spec = spec_trimmed.
 
-    FIND REGEX '^\d+\.\d+\.\d+(-[\w.]+)?(\+[\w.]+)?$' IN spec_trimmed.
+    FIND REGEX '^\d+\.\d+\.\d+(-[\w.]+)?(\+[\w.]+)?$' IN spec_trimmed ##REGEX_POSIX.
     IF sy-subrc = 0.
       result-type = 'version'.
       RETURN.
     ENDIF.
 
-    FIND REGEX '[><=~^|]' IN spec_trimmed.
+    FIND REGEX '[><=~^|]' IN spec_trimmed ##REGEX_POSIX.
     IF sy-subrc = 0.
       result-type = 'range'.
       RETURN.
@@ -150,44 +150,19 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    FIND REGEX '^\d+(\.\d+)?(\.[xX*])?$' IN spec_trimmed.
+    FIND REGEX '^\d+(\.\d+)?(\.[xX*])?$' IN spec_trimmed ##REGEX_POSIX.
     IF sy-subrc = 0.
       result-type = 'range'.
       RETURN.
     ENDIF.
 
-    FIND REGEX '\d\s+-\s+\d' IN spec_trimmed.
+    FIND REGEX '\d\s+-\s+\d' IN spec_trimmed ##REGEX_POSIX.
     IF sy-subrc = 0.
       result-type = 'range'.
       RETURN.
     ENDIF.
 
     result-type = 'tag'.
-
-  ENDMETHOD.
-
-
-  METHOD to_string.
-
-    DATA lv_spec TYPE string.
-
-    IF npa-save_spec IS NOT INITIAL.
-      lv_spec = npa-save_spec.
-    ELSEIF npa-fetch_spec IS NOT INITIAL.
-      lv_spec = npa-fetch_spec.
-    ELSEIF npa-raw_spec IS NOT INITIAL.
-      lv_spec = npa-raw_spec.
-    ENDIF.
-
-    IF npa-name IS NOT INITIAL AND lv_spec IS NOT INITIAL.
-      result = |{ npa-name }@{ lv_spec }|.
-    ELSEIF npa-name IS NOT INITIAL.
-      result = npa-name.
-    ELSEIF lv_spec IS NOT INITIAL.
-      result = lv_spec.
-    ELSE.
-      result = npa-raw.
-    ENDIF.
 
   ENDMETHOD.
 
@@ -210,6 +185,33 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
     result-purl = |pkg:apm/{ purl_name }@{ result-raw_spec }|.
     IF registry <> 'https://registry.abappm.com'.
       result-purl = result-purl && |?repository_url={ registry }|.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD to_string.
+
+    DATA local_spec TYPE string.
+
+    IF npa-save_spec IS NOT INITIAL.
+      local_spec = npa-save_spec.
+    ELSEIF npa-fetch_spec IS NOT INITIAL.
+      local_spec = npa-fetch_spec.
+    ELSEIF npa-raw_spec IS NOT INITIAL.
+      local_spec = npa-raw_spec.
+    ELSE.
+      local_spec = ''.
+    ENDIF.
+
+    IF npa-name IS NOT INITIAL AND local_spec IS NOT INITIAL.
+      result = |{ npa-name }@{ local_spec }|.
+    ELSEIF npa-name IS NOT INITIAL.
+      result = npa-name.
+    ELSEIF local_spec IS NOT INITIAL.
+      result = local_spec.
+    ELSE.
+      result = npa-raw.
     ENDIF.
 
   ENDMETHOD.
