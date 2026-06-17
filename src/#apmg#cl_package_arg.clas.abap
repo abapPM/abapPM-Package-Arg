@@ -14,7 +14,7 @@ CLASS /apmg/cl_package_arg DEFINITION
 ************************************************************************
   PUBLIC SECTION.
 
-    CONSTANTS c_apm_registry type string VALUE 'https://registry.abappm.com'.
+    CONSTANTS c_apm_registry TYPE string VALUE 'https://registry.abappm.com'.
 
     " https://github.com/npm/npm-package-arg/blob/main/lib/npa.js
     METHODS constructor
@@ -42,7 +42,6 @@ CLASS /apmg/cl_package_arg DEFINITION
         !spec         TYPE string
       RETURNING
         VALUE(result) TYPE /apmg/if_package_arg=>ty_result.
-
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -100,9 +99,7 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
 
   METHOD resolve.
 
-    DATA spec_local TYPE string.
-
-    spec_local = spec.
+    DATA(spec_local) = spec.
     IF spec_local IS INITIAL.
       spec_local = '*'.
     ENDIF.
@@ -193,7 +190,7 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
 
   METHOD to_string.
 
-    DATA local_spec TYPE string.
+    DATA(local_spec) = ``.
 
     IF npa-save_spec IS NOT INITIAL.
       local_spec = npa-save_spec.
@@ -202,7 +199,7 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
     ELSEIF npa-raw_spec IS NOT INITIAL.
       local_spec = npa-raw_spec.
     ELSE.
-      local_spec = ''.
+      local_spec = ``.
     ENDIF.
 
     IF npa-name IS NOT INITIAL AND local_spec IS NOT INITIAL.
