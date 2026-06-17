@@ -10,8 +10,7 @@ INTERFACE /apmg/if_package_arg PUBLIC.
 * https://www.npmjs.com/package/npm-package-arg
 ************************************************************************
 
-  CONSTANTS:
-    c_version TYPE string VALUE '1.0.0'.
+  CONSTANTS c_version TYPE string VALUE '1.0.0' ##NEEDED.
 
   TYPES:
     BEGIN OF ty_result,

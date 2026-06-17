@@ -14,6 +14,8 @@ CLASS /apmg/cl_package_arg DEFINITION
 ************************************************************************
   PUBLIC SECTION.
 
+    CONSTANTS c_apm_registry type string VALUE 'https://registry.abappm.com'.
+
     " https://github.com/npm/npm-package-arg/blob/main/lib/npa.js
     METHODS constructor
       IMPORTING
@@ -30,7 +32,7 @@ CLASS /apmg/cl_package_arg DEFINITION
     METHODS to_purl
       IMPORTING
         !arg          TYPE string
-        !registry     TYPE string DEFAULT 'https://registry.abappm.com'
+        !registry     TYPE string DEFAULT c_apm_registry
       RETURNING
         VALUE(result) TYPE /apmg/if_package_arg=>ty_result.
 
@@ -56,9 +58,6 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
   METHOD constructor.
 
     DATA arg_string TYPE string.
-    DATA name TYPE string.
-    DATA spec TYPE string.
-    DATA name_ends_at TYPE i VALUE -1.
 
     arg_string = arg.
 
@@ -71,13 +70,13 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
       DATA(rest) = substring( val = arg_string off = 1 ).
       DATA(at_pos) = find( val = rest sub = '@' ).
       IF at_pos >= 0.
-        name_ends_at = at_pos + 1.
+        DATA(name_ends_at) = at_pos + 1.
       ENDIF.
     ENDIF.
 
     IF name_ends_at > 0.
-      name = substring( val = arg_string len = name_ends_at ).
-      spec = substring( val = arg_string off = name_ends_at + 1 ).
+      DATA(name) = substring( val = arg_string len = name_ends_at ).
+      DATA(spec) = substring( val = arg_string off = name_ends_at + 1 ).
       IF spec IS INITIAL.
         spec = '*'.
       ENDIF.
@@ -169,9 +168,9 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
 
   METHOD to_purl.
 
-    DATA(lo_npa) = NEW /apmg/cl_package_arg( arg ).
+    DATA(npa) = NEW /apmg/cl_package_arg( arg ).
 
-    result = lo_npa->get( ).
+    result = npa->get( ).
 
     IF result-type <> 'version'.
       RETURN.
@@ -183,7 +182,9 @@ CLASS /apmg/cl_package_arg IMPLEMENTATION.
     ENDIF.
 
     result-purl = |pkg:apm/{ purl_name }@{ result-raw_spec }|.
-    IF registry <> 'https://registry.abappm.com'.
+
+    " Standard PURL is for global apm registry, append registry url otherwise
+    IF registry <> c_apm_registry.
       result-purl = result-purl && |?repository_url={ registry }|.
     ENDIF.
 

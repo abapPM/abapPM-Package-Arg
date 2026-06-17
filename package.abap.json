@@ -1,7 +1,7 @@
 {
   "name": "@apm/package-arg",
   "version": "1.0.0",
-  "description": "Package Arg (=WIP=)",
+  "description": "Package Arg",
   "type": "module",
   "keywords": [
     "abap",
@@ -11,7 +11,7 @@
   ],
   "homepage": "https://abappm.com",
   "bugs": {
-    "url": "https://github.com/abapPM/ABAP-Package-Arg/issues"
+    "url": "https://github.com/abapPM/abapPM-Package-Arg/issues"
   },
   "license": "MIT",
   "author": {
@@ -26,7 +26,7 @@
   ],
   "repository": {
     "type": "https",
-    "url": "https://github.com/abapPM/ABAP-Package-Arg"
+    "url": "https://github.com/abapPM/abapPM-Package-Arg"
   },
   "funding": {
     "type": "github",
